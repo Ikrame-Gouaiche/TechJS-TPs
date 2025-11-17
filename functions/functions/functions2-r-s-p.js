@@ -39,11 +39,9 @@ document.addEventListener('keydown', (event) => {
   }     
 });
 
-
-
-function playGame(playerMove) {
+function playGame() {
   const computerMove = pickComputerMove();
-
+  const playerMove = pickComputerMove(); 
   let result = '';
 
   // calculate result
@@ -86,7 +84,7 @@ function playGame(playerMove) {
   // show the new score and the updated images using "document.querySelector"
   document.querySelector('.js-result')
     .innerHTML = `You ${result}.<br> You <img src="images/${playerMove}-emoji.png" class="move-icon">. Computer <img src="images/${computerMove}-emoji.png" class="move-icon">.`;
-
+  setTimeout(playGame, 1000);
 }
 
 function updateScoreElement() {
@@ -109,3 +107,5 @@ function pickComputerMove() {
 
   return computerMove;
 }
+
+playGame();

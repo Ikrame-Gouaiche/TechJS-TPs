@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Tracker Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .stat-card-2 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .stat-card-3 {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <!-- Header -->
+    <nav class="glass-effect text-white p-4 mb-8">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"></path>
+                </svg>
+                <span class="text-2xl font-bold">BookTracker</span>
+            </div>
+            <a href="index.html" class="bg-white text-purple-600 px-6 py-2 rounded-full font-semibold hover:bg-opacity-90 transition duration-200 shadow-lg">
+                ✨ Add Book
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 pb-12">
+        <!-- Welcome Section -->
+        <div class="text-center text-white mb-12">
+            <h1 class="text-5xl font-bold mb-3">📚 Your Reading Journey</h1>
+            <p class="text-xl opacity-90">Track, manage, and celebrate your reading achievements</p>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div class="stat-card rounded-2xl shadow-2xl p-8 text-white card-hover">
+                <div class="flex flex-col items-center text-center">
+                    <div class="text-6xl mb-3">✅</div>
+                    <p class="text-lg font-medium opacity-90 mb-2">Books Finished</p>
+                    <p class="text-5xl font-bold" id="totalFinished">0</p>
+                </div>
+            </div>
+
+            <div class="stat-card-2 rounded-2xl shadow-2xl p-8 text-white card-hover">
+                <div class="flex flex-col items-center text-center">
+                    <div class="text-6xl mb-3">📖</div>
+                    <p class="text-lg font-medium opacity-90 mb-2">Pages Read</p>
+                    <p class="text-5xl font-bold" id="totalPagesRead">0</p>
+                </div>
+            </div>
+
+            <div class="stat-card-3 rounded-2xl shadow-2xl p-8 text-white card-hover">
+                <div class="flex flex-col items-center text-center">
+                    <div class="text-6xl mb-3">📚</div>
+                    <p class="text-lg font-medium opacity-90 mb-2">Total Books</p>
+                    <p class="text-5xl font-bold" id="totalBooks">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Books List -->
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+            <div class="gradient-bg p-8">
+                <h2 class="text-3xl font-bold text-white">📖 My Library</h2>
+            </div>
+
+            <div id="booksContainer" class="p-8">
+                <!-- Books will be loaded here -->
+                <div id="loading" class="text-center py-16">
+                    <div class="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-600"></div>
+                    <p class="mt-4 text-xl text-gray-600 font-medium">Loading your books...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Progress Modal -->
+    <div id="updateModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full hidden">
+        <div class="relative top-20 mx-auto p-8 border-0 w-full max-w-md shadow-2xl rounded-3xl bg-white">
+            <div class="text-center mb-6">
+                <div class="text-6xl mb-4">📊</div>
+                <h3 class="text-2xl font-bold text-gray-900" id="modalTitle">Update Progress</h3>
+            </div>
+            <form id="updateForm">
+                <div class="mb-6">
+                    <label for="updatePagesRead" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Pages Read
+                    </label>
+                    <input type="number" id="updatePagesRead" name="pagesRead" min="0" required
+                           class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg">
+                    <p id="updatePagesError" class="text-red-500 text-sm mt-2 hidden">⚠️ Pages read cannot exceed total pages</p>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" id="cancelUpdate" class="px-6 py-3 text-gray-700 bg-gray-200 rounded-xl hover:bg-gray-300 font-semibold transition duration-200">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-3 gradient-bg text-white rounded-xl hover:opacity-90 font-semibold shadow-lg transition duration-200">
+                        Update 🚀
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
